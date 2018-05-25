@@ -86,12 +86,34 @@ J = J + Regularize;
 
 
 
+for i = 1:m,
+  a1 = X(i,:);
+  z2 = Theta1 * a1';
+  
+  a2 = sigmoid(z2);
+  a2 = [1 ; a2]; %adding biases
+  
+  a3 = sigmoid(Theta2 * a2);
+  
+  %now start going backwards
+  d3 = a3 - Y(:,i);
+  
+  z2 = [1 ; z2];
+  d2 = (Theta2' * d3) .* sigmoidGradient(z2);
+  d2 = d2(2:end);
+  
+  Theta2_grad = (Theta2_grad + d3 * a2');
+  Theta1_grad = (Theta1_grad + d2 * a1);  
+  
+endfor;
 
+%l = 0
+Theta1_grad(:,1) = Theta1_grad(:,1) ./ m;
+Theta2_grad(:,1) = Theta2_grad(:,1) ./ m;
 
-
-
-
-% -------------------------------------------------------------
+%l > 0
+Theta1_grad(:,2:end) = Theta1_grad(:,2:end)./m + ( (lambda/m) * Theta1(:,2:end) );
+Theta2_grad(:,2:end) = Theta2_grad(:,2:end)./m + ( (lambda/m) * Theta2(:,2:end) );
 
 % =========================================================================
 
